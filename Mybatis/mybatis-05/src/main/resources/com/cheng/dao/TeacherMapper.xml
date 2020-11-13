@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cheng.dao.TeacherMapper">
+    <select id="getTeacher" resultMap="TeacherStudent">
+    select s.sid sid,s.name sname,t.name tname,t.tid tid
+    from student s,teacher t
+    where s.tid=t.tid and t.tid= #{tid}
+</select>
+    <resultMap id="TeacherStudent" type="Teacher">
+        <result property="id" column="tid"/>
+        <result property="name" column="tname"/>
+        <collection property="students" ofType="Student">
+            <result property="id" column="sid"/>
+            <result property="name" column="sname"/>
+            <result property="tid" column="tid"/>
+        </collection>
+    </resultMap>
+
+    <!--第二种方案-->
+    <select id="getTeacher2" resultMap="teacherStudent2">
+        select * from teacher where tid=#{tid}
+    </select>
+    <resultMap id="teacherStudent2" type="Teacher">
+        <result property="id" column="tid"/>
+        <collection property="students" javaType="ArrayList" ofType="Student" select="getStudentByTeacherId" column="tid"/>
+    </resultMap>
+    <select id="getStudentByTeacherId" resultType="Student">
+        select * from student where tid=#{tid}
+    </select>
+
+</mapper>
